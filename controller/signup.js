@@ -1,5 +1,5 @@
+const bcrypt = require('bcryptjs');
 const Organization = require('../model/organization');
-
 
 const getOrganization = async function(req, res){
     await Organization.find().exec(function(err, data){
@@ -17,6 +17,8 @@ const getOrganization = async function(req, res){
 };
 
 const createOrganization = async function(req, res){
+    const {password: plainTextPassword} = req.body;
+    const password = await bcrypt.hash(plainTextPassword, 5); //Password Encryption
     await Organization.create({
         organizationName:req.body.organizationName,
         organizationType:req.body.organizationType,
@@ -28,7 +30,7 @@ const createOrganization = async function(req, res){
         organizationProvince: req.body.organizationProvince,
         organizationCountry: req.body.organizationCountry,
         username: req.body.username,
-        password: req.body.password
+        password: password
     }, (err, data) => {
         if(err){
             res
