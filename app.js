@@ -5,13 +5,16 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+require('./utility/db');
 
 const PORT = process.env.PORT || 5000;
+
+const OrganizationRoute = require("./routes/organization");
 
 var app = express();
 app.use(cors());
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -28,6 +31,8 @@ function sayhi(req, res) {
     res.send("Success!! Server is running.");
     //SRN@1234:finalprojectmean@gmail.com 
 }
+
+app.use("/organizations", OrganizationRoute);
 
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
