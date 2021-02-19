@@ -40,13 +40,10 @@ var OrganizationSchema = new mongoose.Schema({
         required: true
     },
     username: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     password: {
-        type: String, 
-        required: true
+        type: String
     }
 
 }, {collection: 'organization'}); 

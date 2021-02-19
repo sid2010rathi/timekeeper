@@ -1,17 +1,20 @@
 const cors = require('cors');
-var createError = require('http-errors');
+const createError = require('http-errors');
 const bodyParser = require('body-parser')
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const jwt = require('jsonwebtoken');
 require('./utility/db');
+const { JWT_SECRET } = require('./utility/utility');
 
+//Port will be considered by server
 const PORT = process.env.PORT || 5000;
 
+//Routes imort
 const OrganizationRoute = require("./routes/organization");
-const loginRoute = require("./routes/routes");
-const ctrlLogin = require("./controller/login");
+const loginRoute = require("./routes/login");
 
 var app = express();
 app.use(cors());
@@ -22,19 +25,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+//Verify user is logged in or not
+app.use((req, res, next) => {
+    if(req && req.headers && req.headers.token) {
+        jwt.verify(req.headers.token, JWT_SECRET, (err, decode) => {
+            if(err) req.user = undefined;
+            req.user = decode;
+            next()
+        })
+    } else {
+        req.user = undefined;
+        next()
+    }
+})
+
 //Path of react build
 //app.use(express.static(path.join(__dirname,'', '')));
 
 //add routes here
-
-app.get("/", sayhi);
-
-function sayhi(req, res) {
-    res.send("Success!! Server is running.");
-    //SRN@1234:finalprojectmean@gmail.com 
-}
-
-app.post("/", ctrlLogin.login);
+app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
 
 app.listen(PORT, () => {

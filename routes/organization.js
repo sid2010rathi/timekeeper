@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
-const ctrlOrganization = require('../controller/signup');
+const organizationCtrl = require('../controller/organization');
+const loginCtrl = require('../controller/login');
 
-router.get('/', ctrlOrganization.getOrganization);
-router.post('/', ctrlOrganization.createOrganization);
+router.get('/', loginCtrl.loginRequired, organizationCtrl.getOrganization);
+router.post('/', organizationCtrl.createOrganization);
 
-router.get('/:organizationid', ctrlOrganization.getSingleOrganization);
-router.put('/:organizationid', ctrlOrganization.updateOrganization);
-router.delete('/:organizationid', ctrlOrganization.deleteOrganization);
+router.get('/:organizationid', loginCtrl.loginRequired, organizationCtrl.getSingleOrganization);
+router.put('/:organizationid', loginCtrl.loginRequired, organizationCtrl.updateOrganization);
+router.delete('/:organizationid', loginCtrl.loginRequired, organizationCtrl.deleteOrganization);
 
 module.exports = router;
