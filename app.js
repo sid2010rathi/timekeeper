@@ -10,6 +10,8 @@ require('./utility/db');
 const PORT = process.env.PORT || 5000;
 
 const OrganizationRoute = require("./routes/organization");
+const loginRoute = require("./routes/routes");
+const ctrlLogin = require("./controller/login");
 
 var app = express();
 app.use(cors());
@@ -32,6 +34,7 @@ function sayhi(req, res) {
     //SRN@1234:finalprojectmean@gmail.com 
 }
 
+app.post("/", ctrlLogin.login);
 app.use("/organizations", OrganizationRoute);
 
 app.listen(PORT, () => {
