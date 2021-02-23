@@ -22,7 +22,7 @@ const login = async function(req, res){
             id: user._id,
             username: user.username
         }, JWT_SECRET)
-        return res.status(200).json({status: 'ok', data:token});
+        return res.status(200).json({status: 'ok', token:token});
     }
     else
         return res.status(200).json({status: 'error', error:"Invalid username/password"});
