@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 //Routes imort
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
+const userOnboard = require("./routes/userOnboard");
 
 var app = express();
 app.use(cors());
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 //add routes here
 app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
+app.use("/userscreation", userOnboard);
 
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
