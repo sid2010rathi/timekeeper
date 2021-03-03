@@ -7,40 +7,33 @@ var OrganizationSchema = new mongoose.Schema({
         min:3
     },
     organizationType: {
-        type: String, 
-        required: true,
-        min:3
+        type: String
     },
     organizationSize: {
-        type: Number,
-        required: true
+        type: Number
     },
     organizationWebsite: {
         type: String,
         required: true
     },
     organizationStreet: {
-        type: String,
-        required: true
+        type: String
     },
     organizationCity: {
         type: String,
-        required: true
     },
     organizationZipcode: {
-        type: String,
-        required: true
+        type: String
     },
     organizationProvince: {
-        type: String,
-        required: true
+        type: String
     },
     organizationCountry: {
-        type: String,
-        required: true
+        type: String
     },
     username: {
-        type: String
+        type: String,
+        unique: true
     },
     password: {
         type: String

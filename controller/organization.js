@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const Organization = require('../model/organization');
 const User = require('../model/user');
+const { sendMail } = require('../services/sendmail');
+const { MAIL_SENDER, randomNumber } = require('../utility/utility');
 
 const getOrganization = async function(req, res){
     await Organization.find({}).exec(function(err, data){
@@ -19,14 +21,7 @@ const createOrganization = async function(req, res){
     const password = await bcrypt.hash(plainTextPassword, 5); //Password Encryption
     await Organization.create({
         organizationName:req.body.organizationName,
-        organizationType:req.body.organizationType,
-        organizationSize: req.body.organizationSize,
         organizationWebsite: req.body.organizationWebsite,
-        organizationStreet: req.body.organizationStreet,
-        organizationCity: req.body.organizationCity,
-        organizationZipcode: req.body.organizationZipcode,
-        organizationProvince: req.body.organizationProvince,
-        organizationCountry: req.body.organizationCountry,
         username: req.body.username,
         password: password
     }, async (err, data) => {
@@ -41,9 +36,14 @@ const createOrganization = async function(req, res){
             }, (err) => {
                 if(err) {
                     throw err;
+                } else {
+                    const subject = "TimeKeeper: Verify Your Account";
+                    const text = `This is your security code: ${randomNumber()}. Please verify your account.`;
+
+                    sendMail(MAIL_SENDER, req.body.username, subject, text);
                 }
             });
-            res.status(200).json(data);
+            res.status(200).json({status: 'ok', data});
     });
 };
 
