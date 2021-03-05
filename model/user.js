@@ -19,6 +19,9 @@ var UserSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true
+    },
+    organizationId: {
+        type: String
     }
 
 }, {collection: 'user'}); 
