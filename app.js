@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
 const verifyRoute = require("./routes/verifyaccount")
+const scheduleRoute = require("./routes/schedule")
 
 var app = express();
 app.use(cors());
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
 app.use("/organizations/verify", verifyRoute);
+app.use("/schedule", scheduleRoute);
 
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
