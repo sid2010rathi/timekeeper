@@ -9,7 +9,8 @@ var UserSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -18,6 +19,9 @@ var UserSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true
+    },
+    organizationId: {
+        type: String
     }
 
 }, {collection: 'user'}); 

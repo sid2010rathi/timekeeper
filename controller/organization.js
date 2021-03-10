@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const Organization = require('../model/organization');
 const User = require('../model/user');
+const { sendMail } = require('../services/sendmail');
+const { MAIL_SENDER, randomNumber } = require('../utility/utility');
+const UserCode = require('../model/usercodes');
 
 const getOrganization = async function(req, res){
     await Organization.find({}).exec(function(err, data){
@@ -19,31 +22,46 @@ const createOrganization = async function(req, res){
     const password = await bcrypt.hash(plainTextPassword, 5); //Password Encryption
     await Organization.create({
         organizationName:req.body.organizationName,
-        organizationType:req.body.organizationType,
-        organizationSize: req.body.organizationSize,
         organizationWebsite: req.body.organizationWebsite,
-        organizationStreet: req.body.organizationStreet,
-        organizationCity: req.body.organizationCity,
-        organizationZipcode: req.body.organizationZipcode,
-        organizationProvince: req.body.organizationProvince,
-        organizationCountry: req.body.organizationCountry,
         username: req.body.username,
         password: password
     }, async (err, data) => {
-        if(err)
+        if(err) {
             res.status(400).json(err);
-        else
-        //Register User as Manager of Organization
+            throw err;
+        }
+        else {
+            //Register User as Manager of Organization
             await User.create({
                 username: data.username,
                 password: password,
-                role: "Manager"
-            }, (err) => {
+                role: "Manager",
+                organizationId: data._id
+            }, async (err, data) => {
                 if(err) {
+                    res.status(400).json(err);
                     throw err;
+                } else {
+                    const code = randomNumber();
+                    const subject = "TimeKeeper: Verify Your Account";
+                    const text = `This is your security code: ${code}. Please verify your account.`;
+
+                    await UserCode.create({
+                        username: data.username,
+                        userId: data._id,
+                        code: code
+                    }, (err) => {
+                        if(err) {
+                            res.status(400).json(err);
+                            throw err;
+                        } else {
+                            sendMail(MAIL_SENDER, req.body.username, subject, text);
+                        }
+                    })
                 }
             });
-            res.status(200).json(data);
+            res.status(200).json({status: 'ok', data});
+        }
     });
 };
 
