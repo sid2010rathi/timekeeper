@@ -25,3 +25,5 @@ const gracefulShutdown = (msg, callback) => {
 };
 
 require('../model/organization');
+require('../model/user');
+

@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 //Routes imort
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
+const userOnboard = require("./routes/userOnboard");
 const verifyRoute = require("./routes/verifyaccount")
 const scheduleRoute = require("./routes/schedule")
 
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 //add routes here
 app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
+app.use("/userscreation", userOnboard);
 app.use("/organizations/verify", verifyRoute);
 app.use("/schedule", scheduleRoute);
 
