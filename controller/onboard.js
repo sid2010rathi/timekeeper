@@ -8,6 +8,8 @@ const createUser = async function(req, res){
         username: req.body.userUsername,
         password: req.body.userPassword,
         role: req.body.userRole,
+        organizationId: req.body.userOrganizationId
+        
     }, async (err, data) => {
         if(err)
             res.status(400).json(err);
