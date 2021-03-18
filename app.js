@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 //Routes imort
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
-const userOnboard = require("./routes/userOnboard");
+const onboardRoute = require("./routes/userOnboard");
 const verifyRoute = require("./routes/verifyaccount")
 const scheduleRoute = require("./routes/schedule")
 const attendenceRoute = require("./routes/attendence")
@@ -30,9 +30,10 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 //Verify user is logged in or not
-app.use((req, res, next) => {
-    if(req && req.headers && req.headers.token) {
-        jwt.verify(req.headers.token, JWT_SECRET, (err, decode) => {
+app.use(async(req, res, next) => {
+    if(req && req.headers && req.headers.authorization) {
+        const token = req.headers.authorization.split(' ')[1];
+        await jwt.verify(token, JWT_SECRET, (err, decode) => {
             if(err) req.user = undefined;
             req.user = decode;
             next()
@@ -49,7 +50,7 @@ app.use((req, res, next) => {
 //add routes here
 app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
-app.use("/userscreation", userOnboard);
+app.use("/onboard", onboardRoute);
 app.use("/organizations/verify", verifyRoute);
 app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);

@@ -1,16 +1,17 @@
 const User = require('../model/user');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../utility/utility');
 
-const createUser = async function(req, res){
+const createEmployee = async function(req, res){
     //validate all request field, Username and Password made not required in model. So should be managed here
     await User.create({
-        firstName:req.body.userFirstName,
-        lastName:req.body.userLastName,
+        firstName: req.body.userFirstName,
+        lastName: req.body.userLastName,
         username: req.body.userUsername,
         password: req.body.userPassword,
         role: req.body.userRole,
-        organizationId: req.body.userOrganizationId
-        
-    }, async (err, data) => {
+        organizationId: req.body.userOrganizationId        
+    }, (err, data) => {
         if(err)
             res.status(400).json(err);
         else
@@ -18,82 +19,45 @@ const createUser = async function(req, res){
     });
 };
 
-// const getSingleUser = async function(req, res){
-//     if(req.params && req.params.userid){
-//         await User
-//             .findById(req.params.userid)
-//             .exec((err, userdata) => {
-//                 if(!userdata){
-//                     res.status(404).json({"message" : "Data not found"});
-//                     return; 
-//                 } else if(err){
-//                     res.status(404).json(err);
-//                     return;
-//                 }
-//                 res.status(200).json(userdata)
-//             });
-//         } else{
-//             res.status(404).json({"message":"ID not found"});
-//         }
+const updateEmployee = async(req, res) => {
+    const user = req.user;
+    if(user) {
+        const {id} =  user;
+        await User.findOneAndUpdate({_id: id}, {$set:{firstName:req.body.firstName,
+        lastName: req.body.lastName, username: req.body.username, password: req.body.password,
+        role: req.body.role, organizationId: req.body.organizationId}}, {new: true}, (err, doc) => {
+            if(err) {
+                res.status(400).json(err);
+            }
 
-// };
+            if(doc) {
+                res.status(200).json({status: "ok", message:"Data found", data: doc});
+            } else {
+                res.status(404).json({status: "ok", message:"Data not found"});
+            }
+        });
+    } else {
+        return res.json({status: 'error', data: "User not found"});
+    }
+}
 
-// const updateOrganization = async function(req, res){
-//     const _id = req.params.organizationid;
-//     if(!_id){
-//         res.status(404).json({"message" : "ID Not Found"});
-//         return;
-//     }
-//     await Organization.findOne({_id})
-//         .exec(async (err, data) =>{
-//             if(!data){
-//                 res.status(404).json({"message" : "Organization not found"});
-//                 return;
-//             } else if(err){
-//                 res.status(404).json(err);
-//                 return;
-//             }
-//             data.organizationName = req.body.organizationName,
-//             data.organizationType = req.body.organizationType,
-//             data.organizationSize = req.body.organizationSize,
-//             data.organizationWebsite = req.body.organizationWebsite,
-//             data.organizationStreet = req.body.organizationStreet,
-//             data.organizationCity = req.body.organizationCity,
-//             data.organizationZipcode = req.body.organizationZipcode,
-//             data.organizationProvince = req.body.organizationProvince,
-//             data.organizationCountry = req.body.organizationCountry,
-//             await data.save((err, data) => {
-//                 if(err){
-//                     res.status(404).json(err);
-//                 } else {
-//                     res.status(200).json(data);
-//                 }
-//             });
-//         });
-// };
-
-
-// const deleteOrganization = async function(req, res){
-//     //when you delete organization delete its all belongings
-//     const _id = req.params.organizationid;
-//     if(_id){
-//         await Organization.findByIdAndRemove({_id})
-//         .exec((err, data) => {
-//             if(err){
-//                 res.status(404).json(err);
-//                 return;
-//             }
-//             res.status(204).json({"message" : "Deleted Successfully"});
-//         });
-//    } else{
-//        res.status(404).json({"message" : "No Organization Found"});
-//    }
-// };
+const getEmployee = async (req, res) => {
+    const user = req.user;
+    const {id, username} =  user;
+    await User.findOne({ _id: id, username }).exec(async (err, data) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        if(!data) {
+            res.status(404).json({status: "ok", message:"Data not found"});
+        } else {
+            res.status(200).json({status: "ok", message:"Data found", data});
+        }
+    })
+}
 
 module.exports ={
-    //getUser, 
-    createUser
-    //getSingleUser,
-    //updateUser,
-    //deleteUser
+    createEmployee,
+    updateEmployee,
+    getEmployee
 };
