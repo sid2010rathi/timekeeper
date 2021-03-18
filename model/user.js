@@ -9,16 +9,13 @@ var UserSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true,
         unique: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     role: {
-        type: String,
-        required: true
+        type: String
     },
     organizationId: {
         type: String

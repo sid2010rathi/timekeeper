@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 //Routes imort
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
-const onboardRoute = require("./routes/userOnboard");
+const onboardRoute = require("./routes/onboard");
 const verifyRoute = require("./routes/verifyaccount")
 const scheduleRoute = require("./routes/schedule")
 const attendenceRoute = require("./routes/attendence")

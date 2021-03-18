@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 const scheduleCtrl = require('../controller/schedule');
+const loginCtrl = require('../controller/login');
 
-router.post('/', scheduleCtrl.createSchedule);
-router.get('/:assignee/:assigner', scheduleCtrl.getSchedule);
-router.put('/:assignee/:assigner', scheduleCtrl.updateSchedule);
+router.post('/', loginCtrl.loginRequired, scheduleCtrl.createSchedule);
+router.get('/:assignee/:assigner', loginCtrl.loginRequired, scheduleCtrl.getSchedule);
+router.put('/:assignee/:assigner', loginCtrl.loginRequired, scheduleCtrl.updateSchedule);
 
 module.exports = router;
