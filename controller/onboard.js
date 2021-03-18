@@ -1,16 +1,17 @@
+const bcrypt = require('bcryptjs');
 const User = require('../model/user');
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../utility/utility');
 
 const createEmployee = async function(req, res){
     //validate all request field, Username and Password made not required in model. So should be managed here
+    const { password: plainTextPassword } = req.body;
+    const password = await bcrypt.hash(plainTextPassword, 5); //Password Encryption
     await User.create({
-        firstName: req.body.userFirstName,
-        lastName: req.body.userLastName,
-        username: req.body.userUsername,
-        password: req.body.userPassword,
-        role: req.body.userRole,
-        organizationId: req.body.userOrganizationId        
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        username: req.body.username,
+        password: password,
+        role: req.body.role,
+        organizationId: req.body.organizationId
     }, (err, data) => {
         if(err)
             res.status(400).json(err);
@@ -24,7 +25,7 @@ const updateEmployee = async(req, res) => {
     if(user) {
         const {id} =  user;
         await User.findOneAndUpdate({_id: id}, {$set:{firstName:req.body.firstName,
-        lastName: req.body.lastName, username: req.body.username, password: req.body.password,
+        lastName: req.body.lastName, username: req.body.username,
         role: req.body.role, organizationId: req.body.organizationId}}, {new: true}, (err, doc) => {
             if(err) {
                 res.status(400).json(err);
