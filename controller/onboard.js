@@ -57,8 +57,23 @@ const getEmployee = async (req, res) => {
     })
 }
 
+//Delete Employee
+const deleteEmployee = async (req, res) => {
+    const user = req.user;
+    const {id, username} =  user;
+    await User.findOneAndDelete({ _id: id, username }).exec(async (err, res) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        else {
+            res.status(200).json({status: "ok", message:"User deleted.", data});
+        }
+    })
+}
+
 module.exports ={
     createEmployee,
     updateEmployee,
-    getEmployee
+    getEmployee,
+    deleteEmployee
 };
