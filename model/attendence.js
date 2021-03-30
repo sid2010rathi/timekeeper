@@ -1,17 +1,5 @@
 const mongoose = require('mongoose')
 
-const PunchInOut = new mongoose.Schema({
-    date: {
-        type: Date
-    },
-    inTime:{
-        type: Date
-    },
-    outTime:{
-        type: Date
-    }
-})
-
 const AttendenceSchema = new mongoose.Schema({
 
     userid: {
@@ -23,21 +11,24 @@ const AttendenceSchema = new mongoose.Schema({
         required: true
     },
     punch: [{
+        week: {
+            type: Number,
+            required: true,
+            default: 0
+        },
         date: {
-            type: Date
+            type: String
         },
         inTime:{
-            type: Date
+            type: String
         },
         outTime:{
-            type: Date
+            type: String
+        },
+        workedHours: {
+            type: String
         }
-    }],
-    workedHours: {
-        type: Number,
-        required: true,
-        default: 0
-    }
+    }]
 }, {collection: 'attendence'}); 
 
 const model = mongoose.model("AttendenceSchema", AttendenceSchema)
