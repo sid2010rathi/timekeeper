@@ -137,10 +137,26 @@ const deleteOrganization = async function(req, res){
    }
 };
 
+const getOrganizationEmployees = async (req, res) => {
+    const organizationId = req.params.organizationId;
+    console.log(1)
+    await User.find({ organizationId }).exec(async (err, data) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        if(!data) {
+            res.status(404).json({status: "ok", message:"Data not found"});
+        } else {
+            res.status(200).json({status: "ok", message:"Data found", data});
+        }
+    })
+}
+
 module.exports ={
     getOrganization, 
     createOrganization,
     getSingleOrganization,
     updateOrganization,
-    deleteOrganization
+    deleteOrganization,
+    getOrganizationEmployees
 };
