@@ -153,7 +153,7 @@ const getOrganizationEmployees = async (req, res) => {
 }
 
 const organizationDetails = async function(req, res){
-    const _id = req.params.organizationid;
+    const _id = req.params.organizationId;
     if(!_id){
         res.status(404).json({"message" : "ID Not Found"});
         return;
@@ -177,9 +177,9 @@ const organizationDetails = async function(req, res){
             data.organizationPhone = req.body.organizationPhone,
             await data.save((err, data) => {
                 if(err){
-                    return res.status(404).json(err);
+                    return res.status(404).json({status: 'error', err});
                 } else {
-                    return res.status(200).json(data);
+                    return res.status(200).json({status: 'ok', data});
                 }
             });
         });
