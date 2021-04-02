@@ -2,16 +2,16 @@ const mongoose = require('mongoose')
 
 var UserCodeSchema = new mongoose.Schema({
     username: {
-        type: String,
-        required: true
+        type: String
     },
     userId: {
-        type: String,
-        required: true
+        type: String
     },
     code: {
-        type: String,
-        required: true
+        type: String
+    },
+    type: {
+        type: String
     }
 
 }, {collection: 'usercode'}); 

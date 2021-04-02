@@ -49,7 +49,8 @@ const createOrganization = async function(req, res){
                     await UserCode.create({
                         username: data.username,
                         userId: data._id,
-                        code: code
+                        code: code,
+                        type: 'Account'
                     }, (err) => {
                         if(err) {
                             res.status(400).json(err);
