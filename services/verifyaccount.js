@@ -2,7 +2,7 @@ const UserCode = require('../model/usercodes');
 
 const verify = async(req, res) => {
     await UserCode
-        .findOne({username: req.body.username, code: req.body.code})
+        .findOne({username: req.body.username, code: req.body.code, type: req.body.type})
         .exec((err, data) => {
             if(!data) {
                return res.status(200).json({status:"error", message:"Please Enter Valid Code"})

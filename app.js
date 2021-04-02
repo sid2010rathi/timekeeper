@@ -19,6 +19,7 @@ const onboardRoute = require("./routes/onboard");
 const verifyRoute = require("./routes/verifyaccount")
 const scheduleRoute = require("./routes/schedule")
 const attendenceRoute = require("./routes/attendence")
+const passwordRoute = require("./routes/password")
 
 var app = express();
 app.use(cors());
@@ -54,6 +55,7 @@ app.use("/onboard", onboardRoute);
 app.use("/organizations/verify", verifyRoute);
 app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);
+app.use("/password", passwordRoute);
 
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
