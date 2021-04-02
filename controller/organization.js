@@ -11,7 +11,7 @@ const getOrganization = async function(req, res){
             res.status(404).json(err);
             return;
         }
-        res.status(200).json(data);
+        return res.status(200).json(data);
     })
     
 };
@@ -60,7 +60,7 @@ const createOrganization = async function(req, res){
                     })
                 }
             });
-            res.status(200).json({status: 'ok', data});
+            return res.status(200).json({status: 'ok', data});
         }
     });
 };
@@ -77,10 +77,10 @@ const getSingleOrganization = async function(req, res){
                     res.status(404).json(err);
                     return;
                 }
-                res.status(200).json(organizationdata)
+                return res.status(200).json(organizationdata)
             });
         } else{
-            res.status(404).json({"message":"ID not found"});
+            return res.status(404).json({"message":"ID not found"});
         }
 
 };
@@ -111,9 +111,9 @@ const updateOrganization = async function(req, res){
             data.organizationCountry = req.body.organizationCountry,
             await data.save((err, data) => {
                 if(err){
-                    res.status(404).json(err);
+                    return res.status(404).json(err);
                 } else {
-                    res.status(200).json(data);
+                    return res.status(200).json(data);
                 }
             });
         });
@@ -130,10 +130,10 @@ const deleteOrganization = async function(req, res){
                 res.status(404).json(err);
                 return;
             }
-            res.status(204).json({"message" : "Deleted Successfully"});
+            return res.status(204).json({"message" : "Deleted Successfully"});
         });
    } else{
-       res.status(404).json({"message" : "No Organization Found"});
+    return res.status(404).json({"message" : "No Organization Found"});
    }
 };
 
@@ -152,11 +152,45 @@ const getOrganizationEmployees = async (req, res) => {
     })
 }
 
+const organizationDetails = async function(req, res){
+    const _id = req.params.organizationid;
+    if(!_id){
+        res.status(404).json({"message" : "ID Not Found"});
+        return;
+    }
+    await Organization.findOne({_id})
+        .exec(async (err, data) =>{
+            if(!data){
+                res.status(404).json({"message" : "Organization not found"});
+                return;
+            } else if(err){
+                res.status(404).json(err);
+                return;
+            }
+            data.organizationType = req.body.organizationType,
+            data.organizationSize = req.body.organizationSize,
+            data.organizationStreet = req.body.organizationStreet,
+            data.organizationCity = req.body.organizationCity,
+            data.organizationZipcode = req.body.organizationZipcode,
+            data.organizationProvince = req.body.organizationProvince,
+            data.organizationCountry = req.body.organizationCountry,
+            data.organizationPhone = req.body.organizationPhone,
+            await data.save((err, data) => {
+                if(err){
+                    return res.status(404).json(err);
+                } else {
+                    return res.status(200).json(data);
+                }
+            });
+        });
+};
+
 module.exports ={
     getOrganization, 
     createOrganization,
     getSingleOrganization,
     updateOrganization,
     deleteOrganization,
-    getOrganizationEmployees
+    getOrganizationEmployees,
+    organizationDetails
 };

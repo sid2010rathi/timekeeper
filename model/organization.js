@@ -31,6 +31,9 @@ var OrganizationSchema = new mongoose.Schema({
     organizationCountry: {
         type: String
     },
+    organizationPhone: {
+        type: Number
+    },
     username: {
         type: String,
         unique: true
