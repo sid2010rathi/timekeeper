@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../model/user');
+const { MAIL_SENDER } = require('../utility/utility');
+const { sendMail } = require('../services/sendmail');
 
 const createEmployee = async function(req, res){
     //validate all request field, Username and Password made not required in model. So should be managed here
@@ -15,8 +17,19 @@ const createEmployee = async function(req, res){
     }, (err, data) => {
         if(err)
             res.status(400).json(err);
-        else
+        else {
+            const subject = "TimeKeeper: Credentials for your login";
+            const text = `Hi ${data.firstName},
+
+            Username: ${data.username}
+            Password: ${plainTextPassword}
+            
+            
+            Thank you,
+            Team Timekeeper`;
+            sendMail(MAIL_SENDER, req.body.username, subject, text);
             res.status(200).json(data);
+        }
     });
 };
 
