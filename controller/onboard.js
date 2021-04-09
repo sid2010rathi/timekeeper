@@ -17,9 +17,9 @@ const createEmployee = async function(req, res){
         phone: req.body.phone
     }, (err, data) => {
         if(err)
-            res.status(400).json(err);
+            return res.status(400).json({status: "error", err});
         else
-            res.status(200).json(data);
+            return res.status(200).json({status: "ok", data});
     });
 };
 
