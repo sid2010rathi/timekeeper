@@ -17,11 +17,10 @@ const punchIn = async (req, res) => {
             res.status(400).json(err);
             throw err;
         }
-
         if(data) {
-            const punch = data.punch
+            const punchArray = data.punch
             let date = dateFormat(now, "longDate");
-            for(let punchData of punch) {
+            for(let punchData of punchArray) {
                 if(punchData.date !== date) {
                     data.punch.push(punch)
                 }
