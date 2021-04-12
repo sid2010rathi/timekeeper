@@ -140,7 +140,6 @@ const deleteOrganization = async function(req, res){
 
 const getOrganizationEmployees = async (req, res) => {
     const organizationId = req.params.organizationId;
-    console.log(1)
     await User.find({ organizationId }).exec(async (err, data) => {
         if(err){
             res.status(400).json(err);
