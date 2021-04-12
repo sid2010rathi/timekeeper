@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../model/user');
+const { MAIL_SENDER } = require('../utility/utility');
+const { sendMail } = require('../services/sendmail');
 const Userdetails = require('../model/userdetails');
 const mongoose = require('mongoose')
 
@@ -18,8 +20,19 @@ const createEmployee = async function(req, res){
     }, (err, data) => {
         if(err)
             return res.status(400).json({status: "error", err});
-        else
-            return res.status(200).json({status: "ok", data});
+        else {
+            const subject = "TimeKeeper: Credentials for your login";
+            const text = `Hi ${data.firstName},
+
+            Username: ${data.username}
+            Password: ${plainTextPassword}
+            
+            
+            Thank you,
+            Team Timekeeper`;
+            sendMail(MAIL_SENDER, req.body.username, subject, text);
+            res.status(200).json(data);
+        }
     });
 };
 
