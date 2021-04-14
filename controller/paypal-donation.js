@@ -10,6 +10,7 @@ const donation = async function(req, res){
         'client_id': 'AXw_1kt0VL5ITmj8V1nhIct_0I7y82wP0l9ec5Bgm1sQ3hWkmNlcY3DS41AhV-3xHcgR_lDTSkGlQUjb',
         'client_secret': 'EJ_IxrwT7DUkAKYfn6AJWhACcI2htkA--DQ70QQlCXG4u4g2dhlMHQrOYvj64eNYCwG4-4yNXf_5c5pc'
       });
+      const amount = req.body.amount;
           const create_payment_json = {
             "intent": "sale",
             "payer": {
@@ -22,16 +23,15 @@ const donation = async function(req, res){
             "transactions": [{
                 "item_list": {
                     "items": [{
-                        "name": "Red Sox Hat",
-                        "sku": "001",
-                        "price": "25.00",
-                        "currency": "USD",
-                        "quantity": 1
+                        "name": "Donation from Timekeeper",
+                        "price": amount.toString(),
+                        "quantity": 1,
+                        "currency": "CAD"
                     }]
                 },
                 "amount": {
-                    "currency": "USD",
-                    "total": "25.00"
+                    "currency": "CAD",
+                    "total": amount.toString()
                 },
                 "description": "Hat for the best team ever"
             }]
@@ -48,31 +48,6 @@ const donation = async function(req, res){
                   }
               }
           });
-        
-          app.get('/success', (req, res) => {
-  const payerId = req.query.PayerID;
-  const paymentId = req.query.paymentId;
-
-  const execute_payment_json = {
-    "payer_id": payerId,
-    "transactions": [{
-        "amount": {
-            "currency": "USD",
-            "total": "25.00"
-        }
-    }]
-  };
-
-  paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
-    if (error) {
-        console.log(error.response);
-        throw error;
-    } else {
-        console.log(JSON.stringify(payment));
-        res.send('Success');
-    }
-    });
-});
       
 };
 
