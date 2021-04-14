@@ -50,6 +50,9 @@ app.use(async(req, res, next) => {
 //app.use(express.static(path.join(__dirname,'', '')));
 
 //add routes here
+app.get("/", (req, res) => {
+    res.send("Hi This is test API")
+});
 app.use("/login", loginRoute);
 app.use("/organizations", OrganizationRoute);
 app.use("/onboard", onboardRoute);
