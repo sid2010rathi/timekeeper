@@ -15,8 +15,7 @@ const createEmployee = async function(req, res){
         username: req.body.username,
         password: password,
         role: req.body.role,
-        organizationId: req.body.organizationId,
-        phone: req.body.phone
+        organizationId: req.body.organizationId
     }, (err, data) => {
         if(err)
             return res.status(400).json({status: "error", err});
@@ -28,10 +27,10 @@ const createEmployee = async function(req, res){
             Password: ${plainTextPassword}
             
             
-            Thank you,
-            Team Timekeeper`;
+Thank you,
+Team Timekeeper`;
             sendMail(MAIL_SENDER, req.body.username, subject, text);
-            res.status(200).json(data);
+            return res.status(200).json({status: "ok", data});
         }
     });
 };
