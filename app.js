@@ -31,12 +31,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
-
+/*app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+});*/
 
 //Verify user is logged in or not
 app.use(async(req, res, next) => {
