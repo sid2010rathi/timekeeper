@@ -1,92 +1,14 @@
 const mongoose = require('mongoose')
 
 const Schedule = new mongoose.Schema({
-    weeknumber: {
-        type: Number
+    day:{
+        type: String
     },
-    monday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
+    starttime: {
+        type: String
     },
-    tuesday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
-    },
-    wednesday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
-    },
-    thursday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
-    },
-    friday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
-    },
-    saturday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
-    },
-    sunday: 
-    {
-        date: {
-            type: String
-        },
-        starttime: {
-            type: String
-        },
-        endtime:{
-            type: String
-        }
+    endtime: {
+        type: String
     }
 })
 
@@ -99,7 +21,10 @@ const SchedulerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    weeks: [Schedule]
+    weeknumber: {
+        type: Number
+    },
+    entries: [Schedule]
 }, {collection: 'scheduler'}); 
 
 const model = mongoose.model("SchedulerSchema", SchedulerSchema)

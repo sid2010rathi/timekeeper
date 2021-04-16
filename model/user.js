@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
         type: String
     },
     userdetails: UserdetailsSchema,
-    Schedule: ScheduleSchema
+    schedule: ScheduleSchema
 }, {collection: 'user'}); 
 
 const model = mongoose.model("UserSchema", UserSchema)

@@ -1,73 +1,61 @@
+const mongoose = require('mongoose')
 const { sendMail } = require('../services/sendmail');
 const { MAIL_SENDER } = require('../utility/utility');
 const Scheduler = require('../model/scheduler');
 const User = require('../model/user');
 
-const dayObject = (date, starttime, endtime) => {
-    return {date, starttime, endtime}
-}
+// const dayObject = (date, starttime, endtime) => {
+//     return {date, starttime, endtime}
+// }
 
 const createSchedule = async (req, res) => {
     const user = req.user;
     const id = user.id;
     const {id:assignee, startdate:weeknumber, day: day, date: date, start: starttime, end:endtime} = req.body;
 
-    let weeks = []
-    let schedule = {}
-
-    switch(day) {
-        case "monday":
-            let monday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                monday
-            }
-            break;
-        case "tuesday":
-            let tuesday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                tuesday
-            }
-            break;
-        case "wednesday":
-            let wednesday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                wednesday
-            }
-            break;
-        case "thursday":
-            let thursday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                thursday
-            }
-            break;
-        case "friday":
-            let friday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                friday
-            }
-            break;
-        case "saturday":
-            let  saturday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                saturday
-            }
-            break;
-        case "sunday":
-            let  sunday = dayObject(date,starttime,endtime)
-            schedule = {
-                weeknumber,
-                sunday
-            }
-            break;
+    let entries = []
+    let entry = {
+        day,
+        starttime,
+        endtime
     }
-    weeks.push(schedule)
-    await Scheduler.findOne({assignee}, async (err, data) => {
+    entries.push(entry)
+
+    let scheduler = new Scheduler({
+        _id: new mongoose.Types.ObjectId(),
+        assigner: id,
+        assignee,
+        weeknumber,
+        entries
+    })
+    console.log(scheduler)
+    await User.findOne({_id: assignee}, (err, doc) => {
+        if(err) {
+            return res.status(400).json(err);
+        }
+
+        if(doc.schedule) {
+            doc.schedule.entries.push(entry);
+            doc.save((err, data) => {
+                if(err) {
+                    return res.status(400).json(err);
+                } else {
+                    return res.status(200).json({status: "ok", message:"Data found", data});
+                }
+            })
+//            return res.status(200).json({status: "ok", message:"Data found", data: doc});
+        } else {
+            doc.schedule = scheduler;
+            doc.save((err, data) => {
+                if(err) {
+                    return res.status(400).json(err);
+                } else {
+                    return res.status(200).json({status: "ok", message:"Data found", data});
+                }
+            })
+        }
+    });
+    /*await Scheduler.findOne({assignee}, async (err, data) => {
         if(err) {
             return  res.status(400).json({status:"error", err});
         } else if(data){
@@ -81,18 +69,26 @@ const createSchedule = async (req, res) => {
                 }
             });
         } else {
-            await Scheduler.create({
+            let schedule = new Scheduler({
+                _id: new mongoose.Types.ObjectId(),
                 assigner: id,
                 assignee,
                 weeks
-            }, (err, data) => {
-                if(err)
-                    return res.status(400).json({status:"error", err});
-                if(data)
-                    return res.status(200).json({status:"ok", data});
             })
+            await User.findOneAndUpdate({_id: assignee}, {$set:{
+                Schedule: schedule}}, {new: true}, (err, doc) => {
+                if(err) {
+                    return res.status(400).json(err);
+                }
+    
+                if(doc) {
+                    return res.status(200).json({status: "ok", message:"Data found", data: doc});
+                } else {
+                    return res.status(404).json({status: "ok", message:"Data not found"});
+                }
+            });
         }
-    })
+    })*/
 }
 
 const getSchedule = async (req, res) => {
