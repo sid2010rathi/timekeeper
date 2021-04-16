@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const UserdetailsSchema = require('./userdetails').schema
+const ScheduleSchema = require('./scheduler').schema
 
 const UserSchema = new mongoose.Schema({
     firstName: {
@@ -22,7 +23,8 @@ const UserSchema = new mongoose.Schema({
     organizationId: {
         type: String
     },
-    userdetails: UserdetailsSchema
+    userdetails: UserdetailsSchema,
+    Schedule: ScheduleSchema
 }, {collection: 'user'}); 
 
 const model = mongoose.model("UserSchema", UserSchema)
