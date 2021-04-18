@@ -36,6 +36,8 @@ const createOrganization = async function(req, res){
                 username: data.username,
                 password: password,
                 role: "Manager",
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
                 organizationId: data._id
             }, async (err, data) => {
                 if(err) {
