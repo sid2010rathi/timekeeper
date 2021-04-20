@@ -21,6 +21,7 @@ const scheduleRoute = require("./routes/schedule")
 const attendenceRoute = require("./routes/attendence")
 const passwordRoute = require("./routes/password")
 const leaveRoute = require('./routes/leaves')
+const contactusRoute = require('./routes/contactus')
 
 var app = express();
 app.use(cors());
@@ -66,7 +67,8 @@ app.use("/organizations/verify", verifyRoute);
 app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);
 app.use("/password", passwordRoute);
-app.use("/leave", leaveRoute)
+app.use("/leave", leaveRoute);
+app.use("/contactus", contactusRoute)
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
 })
