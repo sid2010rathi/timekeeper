@@ -27,7 +27,7 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-//Routes imort
+//Routes import
 const OrganizationRoute = require("./routes/organization");
 const loginRoute = require("./routes/login");
 const onboardRoute = require("./routes/onboard");
@@ -36,6 +36,7 @@ const scheduleRoute = require("./routes/schedule")
 const attendenceRoute = require("./routes/attendence")
 const passwordRoute = require("./routes/password")
 const leaveRoute = require('./routes/leaves')
+const contactusRoute = require('./routes/contactus')
 
 //Verify user is logged in or not
 app.use(async(req, res, next) => {
@@ -63,7 +64,8 @@ app.use("/organizations/verify", verifyRoute);
 app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);
 app.use("/password", passwordRoute);
-app.use("/leave", leaveRoute)
+app.use("/leave", leaveRoute);
+app.use("/contactus", contactusRoute)
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
 })
