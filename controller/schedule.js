@@ -15,6 +15,7 @@ const createSchedule = async (req, res) => {
 
     let entries = []
     let entry = {
+        weeknumber,
         day,
         starttime,
         endtime
@@ -25,7 +26,6 @@ const createSchedule = async (req, res) => {
         _id: new mongoose.Types.ObjectId(),
         assigner: id,
         assignee,
-        weeknumber,
         entries
     })
     console.log(scheduler)
@@ -55,92 +55,26 @@ const createSchedule = async (req, res) => {
             })
         }
     });
-    /*await Scheduler.findOne({assignee}, async (err, data) => {
-        if(err) {
-            return  res.status(400).json({status:"error", err});
-        } else if(data){
-            data.weeks.push(schedule);
-            await data.save(async (err, save) => {
-                if(err) {
-                    return res.status(400).json({status:"error", err});
-                }
-                if(data) {
-                    return res.status(200).json({status:"ok", data});
-                }
-            });
-        } else {
-            let schedule = new Scheduler({
-                _id: new mongoose.Types.ObjectId(),
-                assigner: id,
-                assignee,
-                weeks
-            })
-            await User.findOneAndUpdate({_id: assignee}, {$set:{
-                Schedule: schedule}}, {new: true}, (err, doc) => {
-                if(err) {
-                    return res.status(400).json(err);
-                }
-    
-                if(doc) {
-                    return res.status(200).json({status: "ok", message:"Data found", data: doc});
-                } else {
-                    return res.status(404).json({status: "ok", message:"Data not found"});
-                }
-            });
-        }
-    })*/
 }
 
 const getSchedule = async (req, res) => {
 
-    const {assignee, assigner} = req.params;
+    const {employeeID} = req.params;
 
-    await Scheduler.findOne({
-        assignee: assignee,
-        assigner: assigner
+    await User.findOne({
+        employeeID: employeeID
     }, (err, data) => {
         if(err) {
             res.status(400).json(err);
             throw err;
         } else {
-            res.status(200).json({status: 'ok', data});
+            res.status(200).json({status: 'ok', data: data.user.schedule});
         }
     });
 }
 
-const updateSchedule = async (req, res) => {
-    const {assignee, assigner, schedule} = req.body;
-    const paramsAssignee = req.params.assignee;
-    const paramsAssigner = req.params.assigner;
-
-    await Scheduler.findOne({
-        assignee: paramsAssignee,
-        assigner: paramsAssigner
-    }).exec(async(err, data) => {
-        if(err) {
-            res.status(400).json(err);
-            throw err;
-        }
-
-        if(data) {
-            data.assignee = assignee,
-            data.assigner = assigner,
-            data.schedule = schedule
-            await data.save((err, data) => {
-                if(err){
-                    res.status(404).json(err);
-                } else {
-                    res.status(200).json({status: 'ok', data});
-                }
-            });
-        } else {
-            res.status(200).json({status: 'error', data: null});
-        }
-    })
-}
 
 module.exports= {
     createSchedule,
     getSchedule,
-    updateSchedule
 }
