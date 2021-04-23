@@ -30,41 +30,38 @@ const createOrganization = async function(req, res){
             res.status(400).json(err);
             throw err;
         }
-        else {
-            //Register User as Manager of Organization
-            await User.create({
+        //Register User as Manager of Organization
+        await User.create({
+            username: data.username,
+            password: password,
+            role: "Manager",
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            organizationId: data._id
+        }, async (err, data) => {
+            if(err) {
+                res.status(400).json(err);
+                throw err;
+            }
+            const code = randomNumber();
+            const subject = "TimeKeeper: Verify Your Account";
+            const text = `This is your security code: ${code}. Please verify your account.`;
+
+            await UserCode.create({
                 username: data.username,
-                password: password,
-                role: "Manager",
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                organizationId: data._id
-            }, async (err, data) => {
+                userId: data._id,
+                code: code,
+                type: 'Account'
+            }, (err) => {
                 if(err) {
                     res.status(400).json(err);
                     throw err;
                 } else {
-                    const code = randomNumber();
-                    const subject = "TimeKeeper: Verify Your Account";
-                    const text = `This is your security code: ${code}. Please verify your account.`;
-
-                    await UserCode.create({
-                        username: data.username,
-                        userId: data._id,
-                        code: code,
-                        type: 'Account'
-                    }, (err) => {
-                        if(err) {
-                            res.status(400).json(err);
-                            throw err;
-                        } else {
-                            sendMail(MAIL_SENDER, req.body.username, subject, text);
-                        }
-                    })
+                    sendMail(MAIL_SENDER, req.body.username, subject, text);
                 }
-            });
-            return res.status(200).json({status: 'ok', data});
-        }
+            })
+        });
+        return res.status(200).json({status: 'ok', data});
     });
 };
 
