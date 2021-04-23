@@ -37,7 +37,7 @@ const attendenceRoute = require("./routes/attendence")
 const passwordRoute = require("./routes/password")
 const leaveRoute = require('./routes/leaves')
 const contactusRoute = require('./routes/contactus')
-
+const donation = require('./routes/donation')
 //Verify user is logged in or not
 app.use(async(req, res, next) => {
     if(req && req.headers && req.headers.authorization) {
@@ -65,6 +65,7 @@ app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);
 app.use("/password", passwordRoute);
 app.use("/leave", leaveRoute);
+app.use("/donation", donation);
 app.use("/contactus", contactusRoute)
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);
