@@ -8,8 +8,7 @@ const ContactUsSchema = new mongoose.Schema({
         type: String
     },
     message: {
-        type: String,
-        unique: true
+        type: String
     },
 }, {collection: 'contactus'}); 
 
