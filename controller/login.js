@@ -12,6 +12,7 @@ function loginRequired(req, res, next) {
 }
 
 const login = async function(req, res){
+    console.log("Request Coming")
     const {username, password} = req.body;
     const user = await User.findOne({username}).lean();
     if(!user)

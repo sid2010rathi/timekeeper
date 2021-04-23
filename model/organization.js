@@ -35,8 +35,7 @@ var OrganizationSchema = new mongoose.Schema({
         type: Number
     },
     username: {
-        type: String,
-        unique: true
+        type: String
     },
     password: {
         type: String
