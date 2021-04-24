@@ -1,7 +1,7 @@
+const express = require('express');
 const cors = require('cors');
 const createError = require('http-errors');
 const bodyParser = require('body-parser')
-const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -12,17 +12,6 @@ const { JWT_SECRET } = require('./utility/utility');
 //Port will be considered by server
 const PORT = process.env.PORT || 5000;
 
-//Routes imort
-const OrganizationRoute = require("./routes/organization");
-const loginRoute = require("./routes/login");
-const onboardRoute = require("./routes/onboard");
-const verifyRoute = require("./routes/verifyaccount")
-const scheduleRoute = require("./routes/schedule")
-const attendenceRoute = require("./routes/attendence")
-const passwordRoute = require("./routes/password")
-const leaveRoute = require('./routes/leaves')
-const contactusRoute = require('./routes/contactus')
-
 var app = express();
 app.use(cors());
 
@@ -32,12 +21,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-/*app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});*/
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
+//Routes import
+const OrganizationRoute = require("./routes/organization");
+const loginRoute = require("./routes/login");
+const onboardRoute = require("./routes/onboard");
+const verifyRoute = require("./routes/verifyaccount")
+const scheduleRoute = require("./routes/schedule")
+const attendenceRoute = require("./routes/attendence")
+const passwordRoute = require("./routes/password")
+const leaveRoute = require('./routes/leaves')
+const contactusRoute = require('./routes/contactus')
+const donation = require('./routes/donation')
 //Verify user is logged in or not
 app.use(async(req, res, next) => {
     if(req && req.headers && req.headers.authorization) {
@@ -53,9 +53,6 @@ app.use(async(req, res, next) => {
     }
 })
 
-//Path of react build
-//app.use(express.static(path.join(__dirname,'', '')));
-
 //add routes here
 app.get("/", (req, res) => {
     res.send("Hi This is test API")
@@ -68,6 +65,7 @@ app.use("/schedule", scheduleRoute);
 app.use("/attendence", attendenceRoute);
 app.use("/password", passwordRoute);
 app.use("/leave", leaveRoute);
+app.use("/donation", donation);
 app.use("/contactus", contactusRoute)
 app.listen(PORT, () => {
     console.log("Server is running on port : ", PORT);

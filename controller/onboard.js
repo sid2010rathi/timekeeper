@@ -9,30 +9,35 @@ const createEmployee = async function(req, res){
     //validate all request field, Username and Password made not required in model. So should be managed here
     const { password: plainTextPassword } = req.body;
     const password = await bcrypt.hash(plainTextPassword, 5); //Password Encryption
-    await User.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        username: req.body.username,
-        password: password,
-        role: req.body.role,
-        organizationId: req.body.organizationId
-    }, (err, data) => {
-        if(err)
-            return res.status(400).json({status: "error", err});
-        else {
-            const subject = "TimeKeeper: Credentials for your login";
-            const text = `Hi ${data.firstName},
-
-            Username: ${data.username}
-            Password: ${plainTextPassword}
-            
-            
-Thank you,
-Team Timekeeper`;
-            sendMail(MAIL_SENDER, req.body.username, subject, text);
-            return res.status(200).json({status: "ok", data});
-        }
-    });
+    const user = await User.findOne({username: req.body.username}).lean();
+    if(user) {
+        return res.status(400).json({status: "error", message:"User already exist"});
+    } else {
+        await User.create({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            username: req.body.username,
+            password: password,
+            role: req.body.role,
+            organizationId: req.body.organizationId
+        }, (err, data) => {
+            if(err)
+                return res.status(400).json({status: "error", err});
+            else {
+                const subject = "TimeKeeper: Credentials for your login";
+                const text = `Hi ${data.firstName},
+    
+                Username: ${data.username}
+                Password: ${plainTextPassword}
+                
+                
+    Thank you,
+    Team Timekeeper`;
+                sendMail(MAIL_SENDER, req.body.username, subject, text);
+                return res.status(200).json({status: "ok", data});
+            }
+        });
+    }
 };
 
 const updateEmployee = async(req, res) => {

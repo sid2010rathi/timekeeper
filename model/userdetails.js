@@ -2,8 +2,7 @@ const mongoose = require('mongoose')
 
 const UserdetailsSchema = new mongoose.Schema({
     phone: {
-        type: Number,
-        unique: true
+        type: Number
     },
     street: {
         type: String
