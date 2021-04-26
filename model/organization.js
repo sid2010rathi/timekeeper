@@ -39,7 +39,8 @@ var OrganizationSchema = new mongoose.Schema({
     },
     password: {
         type: String
-    }
+    },
+    organizationUsers: []
 
 }, {collection: 'organization'}); 
 

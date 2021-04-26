@@ -43,6 +43,14 @@ const createOrganization = async function(req, res){
                 res.status(400).json(err);
                 throw err;
             }
+            let organizationUsers = [data._id]
+            await Organization.findOneAndUpdate({_id: data.organizationId}, 
+                {$set:{ organizationUsers }}, 
+                {new: true}, (err, doc) => {
+                if(err) {
+                    return res.status(400).json(err);
+                }
+            });
             const code = randomNumber();
             const subject = "TimeKeeper: Verify Your Account";
             const text = `This is your security code: ${code}. Please verify your account.`;
@@ -71,16 +79,16 @@ const getSingleOrganization = async function(req, res){
             .findById(req.params.organizationid)
             .exec((err, organizationdata) => {
                 if(!organizationdata){
-                    res.status(404).json({"message" : "Data not found"});
+                    res.status(404).json({status: "error", "message" : "Data not found"});
                     return; 
                 } else if(err){
                     res.status(404).json(err);
                     return;
                 }
-                return res.status(200).json(organizationdata)
+                return res.status(200).json({status: "ok", data: organizationdata})
             });
         } else{
-            return res.status(404).json({"message":"ID not found"});
+            return res.status(404).json({status: "error", "message":"ID not found"});
         }
 
 };
