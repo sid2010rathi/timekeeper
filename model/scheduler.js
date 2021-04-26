@@ -1,31 +1,30 @@
 const mongoose = require('mongoose')
 
 const Schedule = new mongoose.Schema({
-    day: {
-        type: String,
-        required: true
+    weeknumber: {
+        type: Number
     },
-    date:{
-        type: String,
-        required: true
+    day:{
+        type: String
     },
-    time:{
-        type: Number,
-        required: true
+    starttime: {
+        type: String
+    },
+    endtime: {
+        type: String
     }
 })
 
 const SchedulerSchema = new mongoose.Schema({
-
-    assignee: {
-        type: String,
-        required: true
-    },
     assigner: {
         type: String,
         required: true
     },
-    schedule: [Schedule]
+    assignee: {
+        type: String,
+        required: true
+    },
+    entries: [Schedule]
 }, {collection: 'scheduler'}); 
 
 const model = mongoose.model("SchedulerSchema", SchedulerSchema)
