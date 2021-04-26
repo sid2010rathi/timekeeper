@@ -4,6 +4,7 @@ const { MAIL_SENDER } = require('../utility/utility');
 const { sendMail } = require('../services/sendmail');
 const Userdetails = require('../model/userdetails');
 const mongoose = require('mongoose')
+const Organization = require('../model/organization');
 
 const createEmployee = async function(req, res){
     //validate all request field, Username and Password made not required in model. So should be managed here
@@ -20,7 +21,7 @@ const createEmployee = async function(req, res){
             password: password,
             role: req.body.role,
             organizationId: req.body.organizationId
-        }, (err, data) => {
+        }, async (err, data) => {
             if(err)
                 return res.status(400).json({status: "error", err});
             else {
@@ -33,7 +34,15 @@ const createEmployee = async function(req, res){
                 
     Thank you,
     Team Timekeeper`;
-                sendMail(MAIL_SENDER, req.body.username, subject, text);
+                //sendMail(MAIL_SENDER, req.body.username, subject, text);
+                await Organization.findOne({_id: data.organizationId}, async (err, data) => {
+                    data.organizationUsers.push(data._id);
+                    await data.save((err, data) => {
+                        if(err){
+                            return res.status(404).json(err);
+                        }
+                    });
+                })
                 return res.status(200).json({status: "ok", data});
             }
         });
