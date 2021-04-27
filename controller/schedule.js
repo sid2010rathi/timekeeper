@@ -73,8 +73,49 @@ const getSchedule = async (req, res) => {
     });
 }
 
+const deleteSchedule = async (req, res) => {
+    const user = req.user;
+    const id = user.id;
+    const {id:assignee, startdate:weeknumber, day: day, date: date, start: starttime, end:endtime} = req.body;
+
+    let entry = {
+        weeknumber,
+        day,
+        starttime,
+        endtime
+    }
+
+    await User.findOne({_id: assignee}, (err, doc) => {
+        if(err) {
+            return res.status(400).json(err);
+        }
+
+        if(doc.schedule) {
+            doc.schedule.entries.pop(entry);
+            doc.save((err, data) => {
+                if(err) {
+                    return res.status(400).json(err);
+                } else {
+                    return res.status(200).json({status: "ok", message:"Data found and deleted", data});
+                }
+            })
+//            return res.status(200).json({status: "ok", message:"Data found", data: doc});
+        } else {
+            // doc.schedule = scheduler;
+            // doc.save((err, data) => {
+            //     if(err) {
+            //         return res.status(400).json(err);
+            //     } else {
+            //         return res.status(200).json({status: "ok", message:"Data found", data});
+            //     }
+            // })
+        }
+    });
+}
+
 
 module.exports= {
     createSchedule,
     getSchedule,
+    deleteSchedule
 }
