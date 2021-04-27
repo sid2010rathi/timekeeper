@@ -34,7 +34,7 @@ const createEmployee = async function(req, res){
                 
     Thank you,
     Team Timekeeper`;
-                //sendMail(MAIL_SENDER, req.body.username, subject, text);
+                sendMail(MAIL_SENDER, req.body.username, subject, text);
                 await Organization.findOne({_id: data.organizationId}, async (err, data) => {
                     data.organizationUsers.push(data._id);
                     await data.save((err, data) => {
