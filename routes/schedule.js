@@ -5,6 +5,7 @@ const scheduleCtrl = require('../controller/schedule');
 const loginCtrl = require('../controller/login');
 
 router.post('/', loginCtrl.loginRequired, scheduleCtrl.createSchedule);
+router.delete('/', loginCtrl.loginRequired, scheduleCtrl.deleteSchedule);
 router.get('/:employeeID', loginCtrl.loginRequired, scheduleCtrl.getSchedule);
 
 module.exports = router;
