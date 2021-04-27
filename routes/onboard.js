@@ -7,5 +7,6 @@ const loginCtrl = require('../controller/login');
 router.get('/', loginCtrl.loginRequired, onboardCtrl.getEmployee);
 router.post('/', loginCtrl.loginRequired, onboardCtrl.createEmployee);
 router.put('/', loginCtrl.loginRequired, onboardCtrl.updateEmployee);
+router.delete('/:username', loginCtrl.loginRequired, onboardCtrl.deleteEmployee);
 
 module.exports = router;
