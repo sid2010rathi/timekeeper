@@ -83,8 +83,8 @@ const punchOut = async(req, res) => {
 }
 
 const getAttandence = async (req, res) => {
-    const user = req.userid;
-    await Attendence.findOne({user}).exec(async (err, data) => {
+    const userid = req.user.id;
+    await Attendence.findOne({userid}).exec(async (err, data) => {
         if(err){
             res.status(400).json(err);
         }
