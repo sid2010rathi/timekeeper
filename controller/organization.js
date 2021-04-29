@@ -11,7 +11,7 @@ const getOrganization = async function(req, res){
             res.status(404).json(err);
             return;
         }
-        res.status(200).json(data);
+        return res.status(200).json(data);
     })
     
 };
@@ -30,38 +30,46 @@ const createOrganization = async function(req, res){
             res.status(400).json(err);
             throw err;
         }
-        else {
-            //Register User as Manager of Organization
-            await User.create({
+        //Register User as Manager of Organization
+        await User.create({
+            username: data.username,
+            password: password,
+            role: "Manager",
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            organizationId: data._id
+        }, async (err, data) => {
+            if(err) {
+                res.status(400).json(err);
+                throw err;
+            }
+            let organizationUsers = [data._id]
+            await Organization.findOneAndUpdate({_id: data.organizationId}, 
+                {$set:{ organizationUsers }}, 
+                {new: true}, (err, doc) => {
+                if(err) {
+                    return res.status(400).json(err);
+                }
+            });
+            const code = randomNumber();
+            const subject = "TimeKeeper: Verify Your Account";
+            const text = `This is your security code: ${code}. Please verify your account.`;
+
+            await UserCode.create({
                 username: data.username,
-                password: password,
-                role: "Manager",
-                organizationId: data._id
-            }, async (err, data) => {
+                userId: data._id,
+                code: code,
+                type: 'Account'
+            }, (err) => {
                 if(err) {
                     res.status(400).json(err);
                     throw err;
                 } else {
-                    const code = randomNumber();
-                    const subject = "TimeKeeper: Verify Your Account";
-                    const text = `This is your security code: ${code}. Please verify your account.`;
-
-                    await UserCode.create({
-                        username: data.username,
-                        userId: data._id,
-                        code: code
-                    }, (err) => {
-                        if(err) {
-                            res.status(400).json(err);
-                            throw err;
-                        } else {
-                            sendMail(MAIL_SENDER, req.body.username, subject, text);
-                        }
-                    })
+                    sendMail(MAIL_SENDER, req.body.username, subject, text);
                 }
-            });
-            res.status(200).json({status: 'ok', data});
-        }
+            })
+        });
+        return res.status(200).json({status: 'ok', data});
     });
 };
 
@@ -71,16 +79,16 @@ const getSingleOrganization = async function(req, res){
             .findById(req.params.organizationid)
             .exec((err, organizationdata) => {
                 if(!organizationdata){
-                    res.status(404).json({"message" : "Data not found"});
+                    res.status(404).json({status: "error", "message" : "Data not found"});
                     return; 
                 } else if(err){
                     res.status(404).json(err);
                     return;
                 }
-                res.status(200).json(organizationdata)
+                return res.status(200).json({status: "ok", data: organizationdata})
             });
         } else{
-            res.status(404).json({"message":"ID not found"});
+            return res.status(404).json({status: "error", "message":"ID not found"});
         }
 
 };
@@ -111,9 +119,9 @@ const updateOrganization = async function(req, res){
             data.organizationCountry = req.body.organizationCountry,
             await data.save((err, data) => {
                 if(err){
-                    res.status(404).json(err);
+                    return res.status(404).json(err);
                 } else {
-                    res.status(200).json(data);
+                    return res.status(200).json(data);
                 }
             });
         });
@@ -130,11 +138,58 @@ const deleteOrganization = async function(req, res){
                 res.status(404).json(err);
                 return;
             }
-            res.status(204).json({"message" : "Deleted Successfully"});
+            return res.status(204).json({"message" : "Deleted Successfully"});
         });
    } else{
-       res.status(404).json({"message" : "No Organization Found"});
+    return res.status(404).json({"message" : "No Organization Found"});
    }
+};
+
+const getOrganizationEmployees = async (req, res) => {
+    const organizationId = req.params.organizationId;
+    await User.find({ organizationId }).exec(async (err, data) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        if(!data) {
+            res.status(404).json({status: "ok", message:"Data not found"});
+        } else {
+            res.status(200).json({status: "ok", message:"Data found", data});
+        }
+    })
+}
+
+const organizationDetails = async function(req, res){
+    const _id = req.params.organizationId;
+    if(!_id){
+        res.status(404).json({"message" : "ID Not Found"});
+        return;
+    }
+    await Organization.findOne({_id})
+        .exec(async (err, data) =>{
+            if(!data){
+                res.status(404).json({"message" : "Organization not found"});
+                return;
+            } else if(err){
+                res.status(404).json(err);
+                return;
+            }
+            data.organizationType = req.body.organizationType,
+            data.organizationSize = req.body.organizationSize,
+            data.organizationStreet = req.body.organizationStreet,
+            data.organizationCity = req.body.organizationCity,
+            data.organizationZipcode = req.body.organizationZipcode,
+            data.organizationProvince = req.body.organizationProvince,
+            data.organizationCountry = req.body.organizationCountry,
+            data.organizationPhone = req.body.organizationPhone,
+            await data.save((err, data) => {
+                if(err){
+                    return res.status(404).json({status: 'error', err});
+                } else {
+                    return res.status(200).json({status: 'ok', data});
+                }
+            });
+        });
 };
 
 module.exports ={
@@ -142,5 +197,7 @@ module.exports ={
     createOrganization,
     getSingleOrganization,
     updateOrganization,
-    deleteOrganization
+    deleteOrganization,
+    getOrganizationEmployees,
+    organizationDetails
 };

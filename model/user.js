@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
-var UserSchema = new mongoose.Schema({
+const UserdetailsSchema = require('./userdetails').schema
+const ScheduleSchema = require('./scheduler').schema
+
+const UserSchema = new mongoose.Schema({
     firstName: {
         type: String
     },
@@ -8,8 +11,7 @@ var UserSchema = new mongoose.Schema({
         type: String
     },
     username: {
-        type: String,
-        unique: true
+        type: String
     },
     password: {
         type: String
@@ -19,8 +21,9 @@ var UserSchema = new mongoose.Schema({
     },
     organizationId: {
         type: String
-    }
-
+    },
+    userdetails: UserdetailsSchema,
+    schedule: ScheduleSchema
 }, {collection: 'user'}); 
 
 const model = mongoose.model("UserSchema", UserSchema)

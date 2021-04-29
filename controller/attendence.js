@@ -1,22 +1,31 @@
 const { sendMail } = require('../services/sendmail');
-const { MAIL_SENDER } = require('../utility/utility');
+const { calculateHours } = require('../utility/utility');
 const Attendence = require('../model/attendence');
+var dateFormat = require("dateformat");
 
 const punchIn = async (req, res) => {
     console.log("Punch In API Called")
     const {userid, organizationid} = req.body;
+    let now = new Date();
     const punch = {
-        date: Date.now(),
-        inTime: Date.now()
+        date: dateFormat(now, "longDate"),
+        inTime: dateFormat(),
+        week: dateFormat(now, "W")
     }
     await Attendence.findOne({userid, organizationid}).exec(async (err, data) => {
         if(err) {
             res.status(400).json(err);
             throw err;
         }
-
         if(data) {
-            data.punch.push(punch)
+            const punchArray = data.punch
+            let date = dateFormat(now, "longDate");
+            for(let punchData of punchArray) {
+                if(punchData.date !== date) {
+                    data.punch.push(punch)
+                }
+            }
+            
             await data.save((err, data) => {
                 if(err){
                     res.status(404).json(err);
@@ -42,9 +51,9 @@ const punchIn = async (req, res) => {
 }
 
 const punchOut = async(req, res) => {
-    console.log("Punch Out API Called", req.body)
-    const {date} = req.body;
-    const {userid, organizationid} = req.params;
+    console.log("Punch Out API Called")
+    const {userid, organizationid} = req.body;
+    let now = new Date();
 
     await Attendence.findOne({userid, organizationid})
     .exec(async (err, data) => {
@@ -52,8 +61,16 @@ const punchOut = async(req, res) => {
             res.status(400).json(err);
             throw err;
         } else {
-            const punch = data.punch;
-            data.punch[0].outTime = Date.now()
+            const punch = data.punch
+            let date = dateFormat(now, "longDate");
+            for(let punchData of punch) {
+                if(punchData.date === date) {
+                    punchData.outTime = dateFormat()
+                    console.log(calculateHours(punchData.outTime, punchData.inTime))
+                    punchData.workedHours = calculateHours(punchData.outTime, punchData.inTime);
+                }
+            }
+            
             await data.save((err, data) => {
                 if(err){
                     res.status(404).json(err);
@@ -65,7 +82,23 @@ const punchOut = async(req, res) => {
     })
 }
 
+const getAttandence = async (req, res) => {
+    const user = req.userid;
+    await Attendence.findOne({user}).exec(async (err, data) => {
+        if(err){
+            res.status(400).json(err);
+        }
+        
+        if(!data) {
+            res.status(404).json({status: "ok", message:"Data not found"});
+        } else {
+            res.status(200).json({status: "ok", message:"Data found", data});
+        }
+    })
+}
+
 module.exports = {
     punchIn,
-    punchOut
+    punchOut,
+    getAttandence
 }
