@@ -83,22 +83,6 @@ const updateEmployee = async(req, res) => {
     }
 }
 
-const deleteEmployee = async(req, res) => {
-    const username = req.params.username
-
-    await User.findOneAndDelete({username: username}, 
-        (err, doc) => {
-        if(err) {
-            return res.status(400).json(err);
-        }
-
-        if(doc) {
-            return res.status(200).json({status: "ok", message:"Data found and deleted.", data: doc});
-        } else {
-            return res.status(404).json({status: "ok", message:"Data not found"});
-        }
-    });
-}
 
 const getEmployee = async (req, res) => {
     const user = req.user;
@@ -118,17 +102,27 @@ const getEmployee = async (req, res) => {
 
 //Delete Employee
 const deleteEmployee = async (req, res) => {
-    const user = req.user;
-    const {id, username} =  user;
-    await User.findOneAndDelete({ _id: id, username }).exec(async (err, res) => {
+    const username = req.params.username;
+    await User.findOneAndDelete({username}).exec(async (err, data) => {
+        
+        console.log("Employee Deleted: "+data);
         if(err){
             res.status(400).json(err);
         }
         else {
+            await Organization.findOne({_id: data.organizationId}, async (err, data) => {
+                data.organizationUsers.pop(data._id);
+                await data.save((err, data) => {
+                    if(err){
+                        return res.status(404).json(err);
+                    }
+                });
+            })
             res.status(200).json({status: "ok", message:"User deleted.", data});
         }
     })
 }
+
 
 module.exports ={
     createEmployee,
